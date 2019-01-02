@@ -4,6 +4,7 @@ import requests
 import os
 from tele_config import *
 from food import *
+from cur import *
 from pprint import pprint as pp
 
 app=Flask(__name__)
@@ -31,7 +32,7 @@ def delete_webhook():
 def telegram():
     doc = request.get_json()
     chatName, chatId, chatMsg = getData(doc)
-    if chatMsg[-2:] == "식단":
+    if chatMsg[-2:] == "식단" or chatMsg[-2:] == "ㅅㄷ":
         foodMsg(chatName, chatId, chatMsg[0:2])
     elif chatMsg == "알림해제" or chatMsg == "알림 해제" or chatMsg == "알림취소" or chatMsg == "알림 취소" or chatMsg == "취소" or chatMsg == "구독 취소" or chatMsg == "구독취소":
         with open('except.csv', 'r') as f:
@@ -57,13 +58,16 @@ def telegram():
             a=csv.writer(f)
             a.writerow(except_list)
         getTelegram(sendParams(chatId,"{} 님 구독 설정되었습니다.".format(chatName)))
+    elif chatMsg == "커리큘럼" or chatMsg == "수업" or chatMsg == "커리" or chatMsg == "수업 일정" or chatMsg == "수업일정" or chatMsg == "일정" or chatMsg == "ㅋㄹㅋㄹ":
+        curMsg(chatName, chatId)
     else:
         msg="잘못된 명령어입니다.\n\n"
         msg+="사용 가능한 명령어 :\n"
-        msg+="식단 > 어제, 오늘, 내일, 모레 식단 출력 가능\n"
+        msg+="식단 > 어제, 오늘, 내일, 모레 식단 출력 기능\n"
         msg+="구독 취소 > 매일 아침, 식단 정기알림 구독을 취소합니다.\n"
         msg+="구독 설정 > 매일 아침, 식단 정기알림 구독을 신청합니다.(default)"
-        getTelegram(sendParams(chatId,"{} 님 죄송합니다.\n {}".format(chatName,msg)))
+        msg+="커리큘럼 or 수업일정 > 이번 주 커리큘럼 출력 기능\n"
+        getTelegram(sendParams(chatId,"{} 님 죄송합니다. {}".format(chatName,msg)))
     with open('data.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
     data[chatId]=chatName

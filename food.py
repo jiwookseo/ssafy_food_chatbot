@@ -1,10 +1,8 @@
 import requests
 from bs4 import BeautifulSoup as bs
-from collections import OrderedDict
 import numpy as np
 import datetime
 from tele_config import *
-import json
 SSAFY_ID=os.getenv("SSAFY_ID")
 SSAFY_PWD=os.getenv("SSAFY_PWD")
 LOGIN_DATA={'userId': SSAFY_ID,'userPwd': SSAFY_PWD}
@@ -13,15 +11,29 @@ s = requests.Session()
 res = s.post(LOGIN_URL, data=LOGIN_DATA, verify=False, allow_redirects=False)
 # print(res.raise_for_status())
 
-url = 'https://edu.ssafy.com/edu/board/notice/detail.do?brdItmSeq=521'
+url = 'https://edu.ssafy.com/edu/board/notice/list.do#;'
 res = s.get(url).text
+doc = bs(res, 'html.parser')
+result=doc.find_all("a")
+food_contents=[]
+for i in result:
+    if i.text[:9]=="[기타] [중식]":
+        food_contents.append(i.get("onclick")[-6:-3])
+notice_url = 'https://edu.ssafy.com/edu/board/notice/detail.do?brdItmSeq={}'.format(food_contents[0])
+# pp(notice_url)
+res = s.get(notice_url).text
 doc = bs(res, 'html.parser')
 result=doc.find_all("table")
 foodlist=result[1]
 trs = foodlist.find_all('tr')
 #data scraping
 
-days=trs[2].text # 주차 별로 데이터가 들어있는 인덱스가 달랐다?
+check=0
+for i,value in enumerate(trs):
+    if value.text[:4]=="\n 구분":
+        check=i
+        break
+days=trs[check].text
 days=days.split("\n")
 days=days[2:-1]
 days_array=np.array(days)
@@ -29,8 +41,14 @@ for i in range(5):
     days_array[i]=days_array[i][1:]
 #날짜데이터 가져오기
 
+check=0
+for i,value in enumerate(trs):
+    if value.text[2:7]=='멀티스퀘어':
+        check=i
+        break
 menu=[]
-for i in range(4,20): # 주차 별로 데이터가 들어있는 인덱스가 달랐다?
+# pp(check)
+for i in range(check,check+16):
     menu.append(trs[i].text.split("\n")[1:-1])
 menu[0]=menu[0][3:]
 menu[8]=menu[8][1:]
