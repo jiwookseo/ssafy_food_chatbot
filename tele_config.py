@@ -19,7 +19,6 @@ def sendParams(user_id,message):
     return "sendMessage?chat_id={}&text={}".format(user_id,message)
     
 def getData(doc):
-    pp(doc)
     try :
         msg=doc["message"].get("text")
         chat_data=doc["message"]["chat"]
@@ -30,5 +29,19 @@ def getData(doc):
     if "last_name" in chat_data:
         name+=" "+chat_data["last_name"]
     return name, chat_data["id"], msg
-
+    
+def getId():
+    update=getTelegram("getUpdates")
+    pp(update)
+    res=update["result"]
+    chat_id=[]
+    for doc in res:
+        try :
+            msg=doc["message"].get("text")
+            chat_data=doc["message"]["chat"]
+        except KeyError :
+            msg=doc["edited_message"].get("text")
+            chat_data=doc["edited_message"]["chat"]
+        chat_id.append(chat_data["id"])
+    return chat_id
 #####################################################################################################

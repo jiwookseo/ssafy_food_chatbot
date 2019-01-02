@@ -43,13 +43,13 @@ menu_dict={}
 for i in range(5):
     menu_dict[i]=menu_array[i].reshape((2,8))
 
-def foodMsg(chat_name, chat_id, day):
+def foodMsg(chat_name, chat_id, day="오늘"):
     dt = datetime.datetime.now(datetime.timezone.utc)
     tz = datetime.timezone(datetime.timedelta(hours=7))
     dt = dt.astimezone(tz)
     #timezone을 설정하여 한국 시간대에 맞출 수 있도록
     wd=dt.weekday()
-    print(dt)
+    # print(dt)
     check=True
     if day=="내일":
         wd+=1
@@ -67,9 +67,9 @@ def foodMsg(chat_name, chat_id, day):
             getTelegram(sendParams(chat_id,"월-금요일 식단만 확인 가능합니다."))
             check=False
     if check:
-        
         message=""
-        message+="{}님 안녕하세요 \n\n".format(chat_name)
+        if chat_name!=None:
+            message+="{}님 안녕하세요 \n\n".format(chat_name)
         if menu_dict[wd][0][-1][1:]=="\u3000":
             message+="{}은 즐거운 휴일입니다.\n푹 쉬세요 :)\n".format(days_array[wd])
         else:
