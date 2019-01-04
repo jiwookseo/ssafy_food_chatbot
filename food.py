@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup as bs
 import numpy as np
 import datetime
 from tele_config import *
+from pprint import pprint as pp
 SSAFY_ID=os.getenv("SSAFY_ID")
 SSAFY_PWD=os.getenv("SSAFY_PWD")
 LOGIN_DATA={'userId': SSAFY_ID,'userPwd': SSAFY_PWD}
@@ -24,13 +25,15 @@ notice_url = 'https://edu.ssafy.com/edu/board/notice/detail.do?brdItmSeq={}'.for
 res = s.get(notice_url).text
 doc = bs(res, 'html.parser')
 result=doc.find_all("table")
-foodlist=result[1]
+foodlist=result[0]
 trs = foodlist.find_all('tr')
 #data scraping
-
+#--------------------------------------------------------------------------------------------------------
+indent=3 # 매주 바뀌는 듯....
+#--------------------------------------------------------------------------------------------------------
 check=0
 for i,value in enumerate(trs):
-    if value.text[:4]=="\n 구분":
+    if value.text[:6]=="\n"+" "*indent+"구분":
         check=i
         break
 days=trs[check].text
@@ -38,12 +41,12 @@ days=days.split("\n")
 days=days[2:-1]
 days_array=np.array(days)
 for i in range(5):
-    days_array[i]=days_array[i][1:]
+    days_array[i]=days_array[i][indent:-1]
 #날짜데이터 가져오기
 
 check=0
 for i,value in enumerate(trs):
-    if value.text[2:7]=='멀티스퀘어':
+    if value.text[1+indent:6+indent]=='멀티스퀘어':  # 매주 바뀌는 듯....
         check=i
         break
 menu=[]
@@ -52,6 +55,7 @@ for i in range(check,check+16):
     menu.append(trs[i].text.split("\n")[1:-1])
 menu[0]=menu[0][3:]
 menu[8]=menu[8][1:]
+# pp(menu)
 menu_array=np.array([])
 for i in range(16):
     menu_array=np.append(menu_array,np.array(menu[i]))
@@ -71,33 +75,29 @@ def foodMsg(chat_name, chat_id, day="오늘"):
     check=True
     if day=="내일":
         wd+=1
-        if wd>=5:
-            getTelegram(sendParams(chat_id,"월-금요일 식단만 확인 가능합니다."))
-            check=False
     elif day=="어제":
         wd-=1
-        if wd<0:
-            getTelegram(sendParams(chat_id,"월-금요일 식단만 확인 가능합니다."))
-            check=False
     elif day=="모레":
         wd+=2
-        if wd>=5:
-            getTelegram(sendParams(chat_id,"월-금요일 식단만 확인 가능합니다."))
-            check=False
+        
+    if wd>=5 and wd<0:
+        getTelegram(sendParams(chat_id,"주중의 식단만 확인 가능합니다."))
+        check=False
+        
     if check:
         message=""
         if chat_name!=None:
             message+="{}님 안녕하세요 \n\n".format(chat_name)
-        if menu_dict[wd][0][-1][1:]=="\u3000":
+        if menu_dict[wd][0][-1][indent:]=="\u3000":
             message+="{}은 즐거운 휴일입니다.\n푹 쉬세요 :)\n".format(days_array[wd])
         else:
             message+="{}의 A형 식단은\n".format(days_array[wd])
             for i in range(7):
-                message+=menu_dict[wd][0][i][1:]+"\n"
-            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][0][-1][1:])
+                message+=menu_dict[wd][0][i][indent:]+"\n"
+            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][0][-1][indent:])
             message+="{}의 B형 식단은\n".format(days_array[wd])
             for i in range(7):
-                message+=menu_dict[wd][1][i][1:]+"\n"
-            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][1][-1][1:])
+                message+=menu_dict[wd][1][i][indent:]+"\n"
+            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][1][-1][indent:])
         message+="인싸봇 올림. 좋은 하루 되세요 :)"
         getTelegram(sendParams(chat_id,message))

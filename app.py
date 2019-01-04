@@ -61,7 +61,6 @@ def telegram():
             a=csv.writer(f)
             a.writerow(except_list)
         getTelegram(sendParams(chatId,"{} 님 구독 설정되었습니다.".format(chatName)))
-
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif chatMsg == "문의" or chatMsg == "문의 사항"or chatMsg == "문의사항":
         msg=""
