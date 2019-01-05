@@ -29,7 +29,7 @@ foodlist=result[0]
 trs = foodlist.find_all('tr')
 #data scraping
 #--------------------------------------------------------------------------------------------------------
-indent=3 # 매주 바뀌는 듯....
+indent=trs[0].text.index('층')-1 # 매주 바뀌는 듯.. 야매로 찾을 수 있도록
 #--------------------------------------------------------------------------------------------------------
 check=0
 for i,value in enumerate(trs):
@@ -80,7 +80,7 @@ def foodMsg(chat_name, chat_id, day="오늘"):
     elif day=="모레":
         wd+=2
         
-    if wd>=5 and wd<0:
+    if wd>=5 or wd<0:
         getTelegram(sendParams(chat_id,"주중의 식단만 확인 가능합니다."))
         check=False
         
@@ -94,10 +94,10 @@ def foodMsg(chat_name, chat_id, day="오늘"):
             message+="{}의 A형 식단은\n".format(days_array[wd])
             for i in range(7):
                 message+=menu_dict[wd][0][i][indent:]+"\n"
-            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][0][-1][indent:])
+            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][0][-1][indent:].replace(u'\xa0', u' '))
             message+="{}의 B형 식단은\n".format(days_array[wd])
             for i in range(7):
                 message+=menu_dict[wd][1][i][indent:]+"\n"
-            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][1][-1][indent:])
+            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][1][-1][indent:].replace(u'\xa0', u' '))
         message+="인싸봇 올림. 좋은 하루 되세요 :)"
         getTelegram(sendParams(chat_id,message))
