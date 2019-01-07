@@ -65,6 +65,10 @@ menu_dict={}
 for i in range(5):
     menu_dict[i]=menu_array[i].reshape((2,8))
 
+#예외사항..--------------------------------------------------------------
+
+#예외사항..--------------------------------------------------------------
+
 def foodMsg(chat_name, chat_id, day="오늘"):
     dt = datetime.datetime.now(datetime.timezone.utc)
     tz = datetime.timezone(datetime.timedelta(hours=7))
@@ -93,11 +97,11 @@ def foodMsg(chat_name, chat_id, day="오늘"):
         else:
             message+="{}의 A형 식단은\n".format(days_array[wd])
             for i in range(7):
-                message+=menu_dict[wd][0][i][indent:]+"\n"
-            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][0][-1][indent:].replace(u'\xa0', u' '))
+                message+=menu_dict[wd][0][i].replace('　','').replace(' ','').replace(' ','')+"\n"
+            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][0][-1].replace('　','').replace(' ','').replace(' ',''))
             message+="{}의 B형 식단은\n".format(days_array[wd])
             for i in range(7):
-                message+=menu_dict[wd][1][i][indent:]+"\n"
-            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][1][-1][indent:].replace(u'\xa0', u' '))
+                message+=menu_dict[wd][1][i].replace('　','').replace(' ','').replace(' ','')+"\n"
+            message+="총 칼로리는 {}입니다.\n\n".format(menu_dict[wd][1][-1].replace('　','').replace(' ','').replace(' ',''))
         message+="인싸봇 올림. 좋은 하루 되세요 :)"
         getTelegram(sendParams(chat_id,message))
