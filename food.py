@@ -18,7 +18,7 @@ doc = bs(res, 'html.parser')
 result=doc.find_all("a")
 food_contents=[]
 for i in result:
-    if i.text[:9]=="[기타] [중식]":
+    if i.text[5:9]=="[중식]":
         food_contents.append(i.get("onclick")[-6:-3])
 notice_url = 'https://edu.ssafy.com/edu/board/notice/detail.do?brdItmSeq={}'.format(food_contents[0])
 # pp(notice_url)
@@ -30,15 +30,19 @@ trs = foodlist.find_all('tr')
 #data scraping
 #--------------------------------------------------------------------------------------------------------
 indent=trs[0].text.index('층')-1 # 매주 바뀌는 듯.. 야매로 찾을 수 있도록
+print("indent=",indent)
 #--------------------------------------------------------------------------------------------------------
 check=0
 for i,value in enumerate(trs):
-    if value.text[:6]=="\n"+" "*indent+"구분":
+    # pp(value.text[:3+indent])
+    if value.text[:3+indent]=="\n"+" "*indent+"구분":
         check=i
         break
+pp(check)
 days=trs[check].text
 days=days.split("\n")
 days=days[2:-1]
+pp(days)
 days_array=np.array(days)
 for i in range(5):
     days_array[i]=days_array[i][indent:-1]
@@ -71,7 +75,7 @@ for i in range(5):
 
 def foodMsg(chat_name, chat_id, day="오늘"):
     dt = datetime.datetime.now(datetime.timezone.utc)
-    tz = datetime.timezone(datetime.timedelta(hours=7))
+    tz = datetime.timezone(datetime.timedelta(hours=9))
     dt = dt.astimezone(tz)
     #timezone을 설정하여 한국 시간대에 맞출 수 있도록
     wd=dt.weekday()
