@@ -35,7 +35,7 @@ for date in result:
         subj_day.append(subj)
     subj_week.append(subj_day)
 def curMsg(chat_name, chat_id):
-    message="{}님 이번주 수업을 알려드립니다.\n".format(chat_name)
+    message="{}님 이번 주 수업을 알려드립니다.\n".format(chat_name)
     for i in range(len(date_list)):
         message+="=====================\n"
         message+="{}\n".format(date_list[i])
