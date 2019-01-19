@@ -12,7 +12,7 @@ week=dt.isocalendar()[1]
 month=dt.month
 
 def getData(month,week):
-    with open("mon{}week{}.txt".format(month,week),'r') as f:
+    with open("data/mon{}week{}.txt".format(month,week),'r') as f:
         a=f.readlines()
     a=[x.replace("\u3000","").replace(" ","").replace("\n","").replace("kcal"," kcal").replace("월","월 ") for x in a if x!="\n"]
     days=a[1:6]
