@@ -9,10 +9,9 @@ dt = datetime.datetime.now(datetime.timezone.utc)
 tz = datetime.timezone(datetime.timedelta(hours=9))
 dt = dt.astimezone(tz)
 week=dt.isocalendar()[1]
-month=dt.month
 
-def getData(month,week):
-    with open("data/mon{}week{}.txt".format(month,week),'r') as f:
+def getData(week):
+    with open("data/week{}.txt".format(week),'r') as f:
         a=f.readlines()
     a=[x.replace("\u3000","").replace(" ","").replace("\n","").replace("kcal"," kcal").replace("월","월 ") for x in a if x!="\n"]
     days=a[1:6]
@@ -28,7 +27,7 @@ def getData(month,week):
     # pp(menu_dict)
     return days,menu_dict
 
-days,menu_dict=getData(month,week)
+days,menu_dict=getData(week)
 
 def foodMsg(chat_name, chat_id, day="오늘"):
     dt = datetime.datetime.now(datetime.timezone.utc)
