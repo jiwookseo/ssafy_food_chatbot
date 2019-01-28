@@ -4,7 +4,7 @@ import requests
 import os
 from tele_config import *
 from food import *
-from cur import *
+# from cur import * 보안 & 크롤링 불가
 from pprint import pprint as pp
 
 app=Flask(__name__)
