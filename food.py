@@ -10,15 +10,18 @@ tz = datetime.timezone(datetime.timedelta(hours=9))
 dt = dt.astimezone(tz)
 week=dt.isocalendar()[1]
 
-def getData(week):
+def getFoodData(week):
     with open("data/week{}.txt".format(week),'r') as f:
         a=f.readlines()
     a=[x.replace("\u3000","").replace(" ","").replace("\n","").replace("kcal"," kcal").replace("월","월 ") for x in a if x!="\n"]
+    if a==None:
+        return None,None
     days=a[1:6]
     menu=a[17:]
+    menu.remove("A코스")
     menu.remove("B코스")
     menu=np.array(menu)
-    # pp(menu.shape)
+    # pp(menu)
     menu=menu.reshape((16,5)).T
     menu=menu.reshape((5,2,8))
     menu_dict={}
@@ -27,7 +30,7 @@ def getData(week):
     # pp(menu_dict)
     return days,menu_dict
 
-days,menu_dict=getData(week)
+days,menu_dict=getFoodData(week)
 
 def foodMsg(chat_name, chat_id, day="오늘"):
     dt = datetime.datetime.now(datetime.timezone.utc)
@@ -36,7 +39,14 @@ def foodMsg(chat_name, chat_id, day="오늘"):
     #timezone을 설정하여 한국 시간대에 맞출 수 있도록
     wd=dt.weekday()
     # print(dt)
+    
+    
     check=True
+    if days==None:
+        getTelegram(sendParams(chat_id,"금주 식단 데이터가 없습니다."))
+        check=False
+        
+    
     if day=="내일":
         wd+=1 if wd!=6 else -6
     elif day=="어제":
@@ -52,8 +62,8 @@ def foodMsg(chat_name, chat_id, day="오늘"):
         message=""
         if chat_name!=None:
             message+="{}님 안녕하세요 \n\n".format(chat_name)
-        if menu_dict[wd][0][0]=="":
-            message+="{}은 즐거운 {}입니다.\n푹 쉬세요 :)\n".format(days[wd],menu_dict[wd][0][4])
+        if menu_dict[wd][0][1]=="`":
+            message+="{}은 즐거운 {}입니다.\n푹 쉬세요 :)\n".format(days[wd],menu_dict[wd][0][0])
         else:
             message+="{}의 A형 식단은\n".format(days[wd])
             for i in range(7):
