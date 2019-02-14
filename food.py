@@ -16,10 +16,13 @@ def getFoodData(week):
     a=[x.replace("\u3000","").replace(" ","").replace("\n","").replace("kcal"," kcal").replace("월","월 ") for x in a if x!="\n"]
     if a==None:
         return None,None
+    # pp(a)
     days=a[1:6]
-    menu=a[17:]
-    menu.remove("A코스")
-    menu.remove("B코스")
+    menu=a[16:]
+    if "A코스" in menu:
+        menu.remove("A코스")
+    if "B코스" in menu:
+        menu.remove("B코스")
     menu=np.array(menu)
     # pp(menu)
     menu=menu.reshape((16,5)).T
@@ -27,7 +30,7 @@ def getFoodData(week):
     menu_dict={}
     for i in range(5):
         menu_dict[i]=menu[i].reshape((2,8))
-    # pp(menu_dict)
+    pp(menu_dict)
     return days,menu_dict
 
 days,menu_dict=getFoodData(week)
