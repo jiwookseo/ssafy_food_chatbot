@@ -24,7 +24,7 @@ def getFoodData(week):
     if "B코스" in menu:
         menu.remove("B코스")
     menu=np.array(menu)
-    # pp(menu)
+    # pp(menu)ㅈ
     menu=menu.reshape((16,5)).T
     menu=menu.reshape((5,2,8))
     menu_dict={}
@@ -46,7 +46,9 @@ def foodMsg(chat_name, chat_id, day="오늘"):
     
     check=True
     if days==None:
-        getTelegram(sendParams(chat_id,"금주 식단 데이터가 없습니다."))
+        # getTelegram(sendParams(chat_id,"금주 식단 데이터가 없습니다."))
+        getTelegram(sendParams(chat_id,"공지사항이 이미지로 올라와서 파업합니다.."))
+        
         check=False
         
     
