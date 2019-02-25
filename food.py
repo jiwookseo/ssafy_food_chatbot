@@ -33,7 +33,8 @@ def getFoodData(week):
     pp(menu_dict)
     return days,menu_dict
 
-days,menu_dict=getFoodData(week)
+days,menu_dict=None,None
+# days,menu_dict=getFoodData(week)
 
 def foodMsg(chat_name, chat_id, day="오늘"):
     dt = datetime.datetime.now(datetime.timezone.utc)
