@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 import csv, json
 import requests
 import os
@@ -7,7 +7,7 @@ from food import *
 # from cur import * 보안 & 크롤링 불가
 from pprint import pprint as pp
 
-app=Flask(__name__)
+app=Flask(__name__,static_url_path='')
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -17,6 +17,11 @@ def index():
 # 텔레그램이 우리에게 알림을 줄 대 사용할 루트
 # 만약 특정 유저가 우리 봇으로 메세지를 보내게 되면
 # 텔레그램이 우리에게 json으로 알림을 보내온다.
+
+@app.route('/image/<path>')
+def image(path):
+    return send_from_directory('data', path)
+
 
 @app.route('/setwebhook')
 def setwebhook():
@@ -31,10 +36,12 @@ def delete_webhook():
 @app.route("/{}".format(tele_key), methods=['POST'])
 def telegram():
     doc = request.get_json()
+    print(doc)
     chatName, chatId, chatMsg = getData(doc)
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if chatMsg[-2:] == "식단" or chatMsg[-2:] == "ㅅㄷ":
-        foodMsg(chatName, chatId, chatMsg[0:2])
+        getTelegram("sendPhoto?chat_id={}&photo={}".format(chatId,'AgADBQADRagxG8hAmVdimItiyzw24qNs2zIABM1YFW_ODgJIEfADAAEC'))
+        # foodMsg(chatName, chatId, chatMsg[0:2])
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif chatMsg == "알림해제" or chatMsg == "알림 해제" or chatMsg == "알림취소" or chatMsg == "알림 취소" or chatMsg == "취소" or chatMsg == "구독 취소" or chatMsg == "구독취소":
         with open('except.csv', 'r') as f:
@@ -95,8 +102,9 @@ def telegram():
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif chatMsg[:3]=="msg" and str(chatId)==str(tele_myid):
         admin=chatMsg.split(",")
-        getTelegram(sendParams(admin[1],admin[2]))
-        getTelegram(sendParams(tele_myid,"{}님께 {} 메세지 보내기 완료".format(admin[1],admin[2])))
+        # getTelegram(sendParams(admin[1],admin[2]))
+        print(getTelegram("sendPhoto?chat_id={}&photo={}".format(tele_myid,'AgADBQADRagxG8hAmVdimItiyzw24qNs2zIABM1YFW_ODgJIEfADAAEC')))
+        # getTelegram(sendParams(tele_myid,"{}님께 {} 메세지 보내기 완료".format(admin[1],admin[2])))
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     else:
         msg="잘못된 명령어입니다.\n\n"
@@ -128,5 +136,6 @@ def sendFoodmsg():
         except_set=set(except_list)
     msg_id=id_set-except_set
     for chatId in msg_id:
-        foodMsg(data[chatId],chatId)
+        getTelegram("sendPhoto?chat_id={}&photo={}".format(chatId,'AgADBQADRagxG8hAmVdimItiyzw24qNs2zIABM1YFW_ODgJIEfADAAEC'))
+        # foodMsg(data[chatId],chatId)
     return render_template("sendFoodmsg.html"), 200
