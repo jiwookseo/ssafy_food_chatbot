@@ -38,9 +38,11 @@ def telegram():
     doc = request.get_json()
     print(doc)
     chatName, chatId, chatMsg = getData(doc)
+    if chatMsg == None:
+        return '', 200
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    if chatMsg[-2:] == "식단" or chatMsg[-2:] == "ㅅㄷ":
-        getTelegram("sendPhoto?chat_id={}&photo={}".format(chatId,'AgADBQADRagxG8hAmVdimItiyzw24qNs2zIABM1YFW_ODgJIEfADAAEC'))
+    elif chatMsg[-2:] == "식단" or chatMsg[-2:] == "ㅅㄷ":
+        getTelegram("sendPhoto?chat_id={}&photo={}".format(chatId,'AgADBQAD2qgxG_MOWFTPD4K7Dx0zUkBc9jIABCLIFtreR-7ync0BAAEC'))
         # foodMsg(chatName, chatId, chatMsg[0:2])
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     elif chatMsg == "알림해제" or chatMsg == "알림 해제" or chatMsg == "알림취소" or chatMsg == "알림 취소" or chatMsg == "취소" or chatMsg == "구독 취소" or chatMsg == "구독취소":
@@ -103,7 +105,7 @@ def telegram():
     elif chatMsg[:3]=="msg" and str(chatId)==str(tele_myid):
         admin=chatMsg.split(",")
         # getTelegram(sendParams(admin[1],admin[2]))
-        print(getTelegram("sendPhoto?chat_id={}&photo={}".format(tele_myid,'AgADBQADRagxG8hAmVdimItiyzw24qNs2zIABM1YFW_ODgJIEfADAAEC')))
+        print(getTelegram("sendPhoto?chat_id={}&photo={}".format(tele_myid,'AgADBQAD2qgxG_MOWFTPD4K7Dx0zUkBc9jIABCLIFtreR-7ync0BAAEC')))
         # getTelegram(sendParams(tele_myid,"{}님께 {} 메세지 보내기 완료".format(admin[1],admin[2])))
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     else:
@@ -136,6 +138,6 @@ def sendFoodmsg():
         except_set=set(except_list)
     msg_id=id_set-except_set
     for chatId in msg_id:
-        getTelegram("sendPhoto?chat_id={}&photo={}".format(chatId,'AgADBQADRagxG8hAmVdimItiyzw24qNs2zIABM1YFW_ODgJIEfADAAEC'))
+        getTelegram("sendPhoto?chat_id={}&photo={}".format(chatId,'AgADBQAD2qgxG_MOWFTPD4K7Dx0zUkBc9jIABCLIFtreR-7ync0BAAEC'))
         # foodMsg(data[chatId],chatId)
     return render_template("sendFoodmsg.html"), 200
